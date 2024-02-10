@@ -35,5 +35,10 @@ FetchContent_MakeAvailable(doctest)
 
 add_library(implementation STATIC implementation.cpp)
 
-add_executable(tests test_implementation.cpp)
-target_link_libraries(tests PRIVATE doctest::doctest implementation)
+include(CTest)
+
+if(BUILD_TESTING)
+  add_executable(tests test_implementation.cpp)
+  target_link_libraries(tests PRIVATE doctest::doctest implementation)
+  add_test(NAME tests COMMAND tests)
+endif()
