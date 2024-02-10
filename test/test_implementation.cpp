@@ -3,7 +3,7 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest/doctest.h"
-#include "implementation.h"
+#include "../src/implementation.h"
 
 TEST_CASE("testing the branch coverage reporting for paths within one line") {
     std::vector<std::tuple<int, int, int, int>> tuplets = {

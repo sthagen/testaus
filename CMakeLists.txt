@@ -16,13 +16,13 @@ include(CTest)
 include(coverage)
 enable_testing()
 
-add_library(implementation STATIC implementation.cpp)
+add_library(implementation STATIC src/implementation.cpp)
 
-add_executable(example main.cpp)
+add_executable(example example/main.cpp)
 target_link_libraries(example PRIVATE implementation)
 
 if(BUILD_TESTING)
-  add_executable(tests test_implementation.cpp)
+  add_executable(tests test/test_implementation.cpp)
   target_link_libraries(tests PRIVATE doctest::doctest implementation)
   add_test(NAME tests COMMAND tests)
 endif()

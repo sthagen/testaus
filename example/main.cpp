@@ -1,5 +1,5 @@
 #include <iostream>
-#include "implementation.h"
+#include "../src/implementation.h"
 int main() {
   std::cout << "Please enter three integers separated by spaces: ";
   int a{}, b{}, c{};
