@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15...3.28)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")
-
 include(FetchContent)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")
+include(cxx_language_version)
 
 option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
   Tests in tests/*.cpp will still be enabled." ON)
 include(doctest)
-include(compilers)
 
 project(
   doctest-covr-training
