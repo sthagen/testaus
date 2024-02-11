@@ -1,34 +1,49 @@
 .DEFAULT_GOAL := all
+build_coverage=build-coverage
+build_release_with_debug=build
+warning_policy=-Wno-dev
+generator=Ninja
 browser=open
 
+.PHONY: setup
+setup: clean
+	pip install -r test/requirements.txt
+	cmake -G $(generator) -DCMAKE_BUILD_TYPE=Coverage -S . -B $(build_coverage) $(warning_policy)
+	cmake -G $(generator) -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B $(build_release_with_debug) $(warning_policy)
+
 .PHONY: build
-build: clean
-	@g++ --std=c++20 --coverage -c implementation.cpp
-	@g++ --std=c++20 --coverage -o test_implementation test_implementation.cpp implementation.o
+build:
+	cmake --build $(build_release_with_debug) --target implementation
+	cmake --build $(build_coverage) --target implementation
 
 .PHONY: test
-test: build
-	@./test_implementation
+test:
+	cmake --build $(build_coverage) --target execute_tests
 
-.PHONY: testcov
-testcov: test
-	@echo "building coverage html"
-	@gcovr -r . --exclude doctest --exclude test_ --html-details -o coverage/
-	@$(browser) coverage/coverage_details.html 
+.PHONY: coverage
+coverage:
+	cmake --build $(build_coverage) --target coverage
+	@$(browser) $(build_coverage)/coverage/coverage_details.html
+	cat $(build_coverage)/coverage/summary_coverage.json && echo
+
+.PHONY: analysis
+analysis: test
+	cmake --build $(build_coverage) --target analysis
+	@python -m json.tool $(build_coverage)/analysis/cppcheck.report.json
 
 .PHONY: all
-all: build testcov
+all: build example coverage analysis
 
 .PHONY: example
-example: clean
-	@g++ --std=c++20 -c implementation.cpp
-	@g++ --std=c++20 -o example main.cpp implementation.o
-	@echo "1 2 3" | ./example
+example:
+	cmake --build $(build_release_with_debug) --target example
+	@echo "1 2 3" | $(build_release_with_debug)/example
 
 .PHONY: clean
 clean:
-	@rm -f ./*.gc?? ./*.o example test_implementation 
+	if [ -d "$(build_release_with_debug)" ]; then cmake --build $(build_release_with_debug) --target clean; fi
+	if [ -d "$(build_coverage)" ]; then cmake --build $(build_coverage) --target clean; fi
 
 .PHONY: distclean
 distclean: clean
-	@rm -fr coverage 
+	@rm -fr ./$(build_coverage) ./$(build_release_with_debug)

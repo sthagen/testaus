@@ -4,9 +4,15 @@ include(FetchContent)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")
 include(cxx_language_version)
 
-option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
+option(ENABLE_DOCTESTS "Include doctest based tests in the library.
+  Setting this to OFF will remove all doctest related code.
   Tests in tests/*.cpp will still be enabled." ON)
 include(doctest)
+
+option(ENABLE_CATCH2 "Include Catch2 based tests in the library.
+  Setting this to OFF will remove all doctest related code.
+  Tests in tests/*.cpp will still be enabled." ON)
+include(catch2)
 
 project(
   doctest-covr-training
@@ -28,6 +34,10 @@ if(BUILD_TESTING)
   add_executable(tests test/test_implementation.cpp)
   target_link_libraries(tests PRIVATE doctest::doctest implementation)
   add_test(NAME tests COMMAND tests)
+
+  add_executable(tests_catch2 test/test_implementation_catch2.cpp)
+  target_link_libraries(tests_catch2 PRIVATE Catch2::Catch2WithMain implementation)
+  add_test(NAME tests_catch2 COMMAND tests_catch2)
 endif()
 
 include(gcovr)

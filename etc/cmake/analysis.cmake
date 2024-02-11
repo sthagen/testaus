@@ -8,7 +8,7 @@ set(ANALYSIS_FILTER_OPTIONS
     --std=c++20
     --xml)
 set(ANALYSIS_FOLDER_PATH ${CMAKE_BINARY_DIR}/${ANALYSIS_FOLDER})
-set(COVERAGE_IMPLEMENTATION
+set(ANALYSIS_IMPLEMENTATION
     mkdir
     -p
     ${ANALYSIS_FOLDER_PATH}
@@ -29,5 +29,5 @@ add_custom_target(
   analysis
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMENT "Running cppcheck for analysis - writing reports and logs to ${ANALYSIS_FOLDER_PATH}cppcheck.{log,report}.*"
-  COMMAND ${COVERAGE_IMPLEMENTATION})
+  COMMAND ${ANALYSIS_IMPLEMENTATION})
 message(STATUS "Added analysis target")
