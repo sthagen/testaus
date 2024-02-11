@@ -24,10 +24,10 @@ test:
 coverage:
 	cmake --build $(build_coverage) --target coverage
 	@$(browser) $(build_coverage)/coverage/coverage_details.html
-	cat $(build_coverage)/coverage/summary_coverage.json && echo
+	@cat $(build_coverage)/coverage/summary_coverage.json && echo
 
 .PHONY: analysis
-analysis: test
+analysis:
 	cmake --build $(build_coverage) --target analysis
 	@python -m json.tool $(build_coverage)/analysis/cppcheck.report.json
 
@@ -41,8 +41,8 @@ example:
 
 .PHONY: clean
 clean:
-	if [ -d "$(build_release_with_debug)" ]; then cmake --build $(build_release_with_debug) --target clean; fi
-	if [ -d "$(build_coverage)" ]; then cmake --build $(build_coverage) --target clean; fi
+	@if [ -d "$(build_release_with_debug)" ]; then cmake --build $(build_release_with_debug) --target clean; fi
+	@if [ -d "$(build_coverage)" ]; then cmake --build $(build_coverage) --target clean; fi
 
 .PHONY: distclean
 distclean: clean

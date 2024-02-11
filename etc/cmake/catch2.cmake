@@ -7,5 +7,5 @@ if(ENABLE_CATCH2)
     FIND_PACKAGE_ARGS)
 
   FetchContent_MakeAvailable(catch2)
-  message(STATUS "catch2 v3.5.2 enabled and loaded - use doctest::doctest in your target_link_library calls")
+  message(STATUS "catch2 v3.5.2 enabled and loaded - use e.g. Catch2::Catch2WithMain in your target_link_library call(s)")
 endif()
