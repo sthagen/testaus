@@ -1,10 +1,33 @@
-set(analysis_folder analysis/)
-set(analysis_filter_options --enable=all --suppress=missingIncludeSystem --inconclusive --inline-suppr --language=c++ --std=c++20 --xml)
-set(analysis_folder_path ${CMAKE_BINARY_DIR}/${analysis_folder})
-set(coverage_implementation mkdir -p ${analysis_folder_path} && cppcheck ${analysis_filter_options} example/ src/ 1>${analysis_folder_path}cppcheck.log.txt 2>${analysis_folder_path}cppcheck.report.xml && cppcheck-codequality -i ${analysis_folder_path}cppcheck.report.xml -o ${analysis_folder_path}cppcheck.report.json)
-add_custom_target(analysis
+set(ANALYSIS_FOLDER analysis/)
+set(ANALYSIS_FILTER_OPTIONS
+    --enable=all
+    --suppress=missingIncludeSystem
+    --inconclusive
+    --inline-suppr
+    --language=c++
+    --std=c++20
+    --xml)
+set(ANALYSIS_FOLDER_PATH ${CMAKE_BINARY_DIR}/${ANALYSIS_FOLDER})
+set(COVERAGE_IMPLEMENTATION
+    mkdir
+    -p
+    ${ANALYSIS_FOLDER_PATH}
+    &&
+    cppcheck
+    ${ANALYSIS_FILTER_OPTIONS}
+    example/
+    src/
+    1>${ANALYSIS_FOLDER_PATH}cppcheck.log.txt
+    2>${ANALYSIS_FOLDER_PATH}cppcheck.report.xml
+    &&
+    cppcheck-codequality
+    -i
+    ${ANALYSIS_FOLDER_PATH}cppcheck.report.xml
+    -o
+    ${ANALYSIS_FOLDER_PATH}cppcheck.report.json)
+add_custom_target(
+  analysis
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  COMMENT "Running cppcheck for analysis - writing reports and logs to ${analysis_folder_path}cppcheck.{log,report}.*"
-  COMMAND ${coverage_implementation}
-)
+  COMMENT "Running cppcheck for analysis - writing reports and logs to ${ANALYSIS_FOLDER_PATH}cppcheck.{log,report}.*"
+  COMMAND ${COVERAGE_IMPLEMENTATION})
 message(STATUS "Added analysis target")
