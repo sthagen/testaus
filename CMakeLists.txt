@@ -3,6 +3,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")
 
 include(FetchContent)
 
+option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
+  Tests in tests/*.cpp will still be enabled." ON)
 include(doctest)
 include(compilers)
 
