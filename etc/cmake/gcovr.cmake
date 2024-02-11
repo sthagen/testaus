@@ -12,3 +12,4 @@ else()  # Assuming gcc for this example
       find_program(GCOV_EXECUTABLE gcov REQUIRED)
 endif()
 configure_file(etc/gcovr.cfg.in gcovr.cfg @ONLY)
+message(STATUS "gcovr configured (cf. build/gcovr.cfg)")

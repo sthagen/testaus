@@ -7,5 +7,5 @@ if(ENABLE_DOCTESTS)
     FIND_PACKAGE_ARGS)
 
   FetchContent_MakeAvailable(doctest)
-  message(STATUS "doctest enabled and loaded - use doctest::doctest in your target_link_library calls")
+  message(STATUS "doctest v2.4.11 enabled and loaded - use doctest::doctest in your target_link_library calls")
 endif()

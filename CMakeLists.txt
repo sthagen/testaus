@@ -15,7 +15,8 @@ project(
   LANGUAGES CXX)
 
 include(CTest)
-include(coverage)
+option(ENABLE_COVERAGE "Enable coverage options. Setting this to OFF will disable coverage." ON)
+include(coverage_compiler_options)
 enable_testing()
 
 add_library(implementation STATIC src/implementation.cpp)
@@ -30,6 +31,6 @@ if(BUILD_TESTING)
 endif()
 
 include(gcovr)
-include(run_tests)
-include(process_coverage)
+include(execute_tests)
+include(coverage)
 include(analysis)

@@ -1,9 +1,10 @@
-if(PROJECT_IS_TOP_LEVEL AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      set(CMAKE_CXX_FLAGS_COVERAGE "-g -O0 --coverage")
-      if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-          string(APPEND CMAKE_CXX_FLAGS_COVERAGE "-fkeep-inline-functions -fprofile-abs-path -fno-inline -fno-default-inline -fno-inline-small-functions")
-      endif()
-      set(CMAKE_EXE_LINKER_FLAGS_COVERAGE "--coverage")
-      set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "--coverage")
-      set(CMAKE_MODULE_LINKER_FLAGS_COVERAGE "--coverage")
-  endif()
+set(coverage_folder coverage/)
+set(coverage_filter_options --exclude _deps --exclude ../test --exclude-unreachable-branches --decisions --html-details)
+set(coverage_index_path ${CMAKE_BINARY_DIR}/${coverage_folder}coverage_details.html)
+add_custom_target(coverage
+  DEPENDS execute_tests
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMENT "Executing gcovr to process coverage - open ${coverage_index_path} to inspect results"
+  COMMAND gcovr --config gcovr.cfg ${coverage_filter_options} -o ${coverage_folder} .
+)
+message(STATUS "Added coverage target")
