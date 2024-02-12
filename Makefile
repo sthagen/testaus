@@ -45,7 +45,7 @@ clean:
 	@if [ -d "$(build_coverage)" ]; then cmake --build $(build_coverage) --target clean; fi
 
 .PHONY: distclean
-distclean: clean
+distclean:
 	@rm -fr ./$(build_coverage) ./$(build_release_with_debug)
 
 .PHONY: name
