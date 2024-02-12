@@ -6,8 +6,8 @@ Versions of testaus currently being supported with security updates.
 
 | Version(s)  | Supported |
 |:------------|:----------|
-| 2024.2.10   | yes       |
-| < 2024.2.10 | no        |
+| 2024.2.12   | yes       |
+| < 2024.2.12 | no        |
 
 ## Reporting a Vulnerability
 
