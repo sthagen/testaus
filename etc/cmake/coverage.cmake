@@ -13,9 +13,6 @@ set(COVERAGE_FILTER_OPTIONS
     --json-summary
     --html-details)
 set(COVERAGE_IMPLEMENTATION
-    mkdir
-    -p ${CMAKE_BINARY_DIR}/${COVERAGE_FOLDER}
-    &&
     gcovr
     --config
     gcovr.cfg
@@ -29,5 +26,6 @@ add_custom_target(
   DEPENDS execute_tests
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   COMMENT "Executing gcovr to process coverage - open ${COVERAGE_INDEX_PATH} to inspect results"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/${COVERAGE_FOLDER}"
   COMMAND ${COVERAGE_IMPLEMENTATION})
 message(STATUS "Added coverage target")

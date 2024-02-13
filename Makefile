@@ -3,7 +3,7 @@ build_coverage=build-coverage
 build_release_with_debug=build
 warning_policy=-Wno-dev
 generator=Ninja
-browser=open
+browser=bin/open_in_browser.py
 
 .PHONY: setup
 setup: clean
