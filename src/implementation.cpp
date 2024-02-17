@@ -1,3 +1,5 @@
+#include <glaze/glaze.hpp>
+
 #include "implementation.h"
 
 // Naive maximum of three integer values to test compact single-line branch coverage reporting
@@ -61,3 +63,6 @@ auto switch_logic(int a) -> int {
         
     }
 }
+
+// Bake me a json string
+auto to_json(impluct obj) -> std::string { return glz::write_json(obj); }
