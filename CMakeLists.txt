@@ -7,12 +7,18 @@ include(cxx_language_version)
 option(ENABLE_DOCTESTS "Include doctest based tests in the library.
   Setting this to OFF will remove all doctest related code.
   Tests in tests/*.cpp will still be enabled." ON)
+message(STATUS "ENABLE_DOCTESTS is (${ENABLE_DOCTESTS})")
 include(doctest)
 
 option(ENABLE_CATCH2 "Include Catch2 based tests in the library.
-  Setting this to OFF will remove all doctest related code.
-  Tests in tests/*.cpp will still be enabled." ON)
+  Setting this to OFF will remove all catch2 related code.
+  Tests in tests/*.cpp will still be enabled." OFF)
+message(STATUS "ENABLE_CATCH2 is (${ENABLE_CATCH2})")
 include(catch2)
+
+option(ENABLE_GLAZE "Include glaze json functionality in the library."
+   ON)
+include(glaze)
 
 project(
   doctest-covr-training
@@ -26,18 +32,23 @@ include(coverage_compiler_options)
 enable_testing()
 
 add_library(implementation STATIC src/implementation.cpp)
+target_link_libraries(implementation PRIVATE glaze::glaze)
 
 add_executable(example example/main.cpp)
 target_link_libraries(example PRIVATE implementation)
 
 if(BUILD_TESTING)
-  add_executable(tests test/test_implementation.cpp)
-  target_link_libraries(tests PRIVATE doctest::doctest implementation)
-  add_test(NAME tests COMMAND tests)
+  if(ENABLE_DOCTESTS)
+    add_executable(tests test/test_implementation.cpp)
+    target_link_libraries(tests PRIVATE doctest::doctest implementation)
+    add_test(NAME tests COMMAND tests)
+  endif()
 
-  add_executable(tests_catch2 test/test_implementation_catch2.cpp)
-  target_link_libraries(tests_catch2 PRIVATE Catch2::Catch2WithMain implementation)
-  add_test(NAME tests_catch2 COMMAND tests_catch2)
+  if(ENABLE_CATCH2)
+    add_executable(tests_catch2 test/test_implementation_catch2.cpp)
+    target_link_libraries(tests_catch2 PRIVATE Catch2::Catch2WithMain implementation)
+    add_test(NAME tests_catch2 COMMAND tests_catch2)
+  endif()
 endif()
 
 include(gcovr)
