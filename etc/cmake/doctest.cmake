@@ -5,6 +5,7 @@ if(ENABLE_DOCTESTS)
     doctest
     GIT_REPOSITORY https://github.com/doctest/doctest.git
     GIT_TAG ${DOCTEST_TAG} # commit ae7a13539fb71f270b87eb2e874fbac80bc8dda2
+    GIT_SHALLOW TRUE
     FIND_PACKAGE_ARGS)
 
   FetchContent_MakeAvailable(doctest)

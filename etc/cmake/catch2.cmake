@@ -5,6 +5,7 @@ if(ENABLE_CATCH2)
     catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG ${CATCH2_TAG} # commit 05e10dfccc28c7f973727c54f850237d07d5e10f
+    GIT_SHALLOW TRUE
     FIND_PACKAGE_ARGS)
 
   FetchContent_MakeAvailable(catch2)
