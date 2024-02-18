@@ -1,4 +1,5 @@
 #include <glaze/glaze.hpp>
+#include <pugixml.hpp>
 #include <spdlog/spdlog.h>
 #include <yaml-cpp/yaml.h>
 
@@ -8,7 +9,7 @@
 auto triple_max(int a, int b, int c) -> int { return (a > b) && (a > c) ? a : ( b > c ? b : c ); }
 
 // Spread some logic for aggregation of branches verification in coverage reports
-auto spread_logic(int a) -> int {
+auto spread_logic(int a) -> int {  // The function ... is never used. (CWE-561)
   int const b{42};
   if ( a > 0 ) {
     int const c{2 * a};
@@ -24,7 +25,7 @@ auto spread_logic(int a) -> int {
 }
 
 // Do some weird switch stuff
-auto switch_logic(int a) -> int {
+auto switch_logic(int a) -> int {  // The function ... is never used. (CWE-561)
   int const b{42};
   switch (a) {
     case 1:
@@ -60,7 +61,7 @@ auto switch_logic(int a) -> int {
       }
       int const dead_code{};
       return dead_code;
-      break;
+      break;  // Consecutive return, break, continue, goto or throw statements are unnecessary. (CWE-561)
     }
     default:
       return b;
@@ -68,22 +69,20 @@ auto switch_logic(int a) -> int {
 }
 
 // Bake me a json string
-auto to_json(impluct obj) -> std::string { return glz::write_json(obj); }
+auto to_json(impluct obj) -> std::string {  // The function ... is never used. (CWE-561)
+  return glz::write_json(obj);
+}
 
 // Eat my cake
-auto impluct_from_json(std::string buffer) -> impluct {
+auto impluct_from_json(std::string buffer) -> impluct {  // The function ... is never used. (CWE-561)
   impluct obj{};
   auto ec = glz::read_json(obj, buffer); // populates object from buffer
-  if (ec) {
-    spdlog::error("Parsing of ({}) failed with code ({})", buffer, ec);
-  } else {
-    spdlog::info("Parsing succeeded - to demonstrate arc/branches for log of constant content");
-  }
+  if (ec) spdlog::error("Parsing of ({}) failed with code ({})", buffer, ec);
   return obj;
 }
 
 // Bake me a yaml string
-auto to_yaml(confluct obj) -> std::string {
+auto to_yaml(confluct obj) -> std::string {  // Function parameter 'obj' should be passed by const reference. (CWE-398)
   YAML::Node node;
   node["i"] = obj.i;
   node["hello"] = obj.hello;
@@ -101,17 +100,55 @@ auto confluct_from_json(std::string buffer) -> confluct {
   auto ec = glz::read_json(obj, buffer); // populates object from buffer
   if (ec) {
     spdlog::error("Parsing of ({}) failed with code ({})", buffer, ec);
+    return {};
   }
   return obj;
 }
 
 // Eat my yummie confake
-auto confluct_from_yaml(std::string buffer) -> confluct {
+auto confluct_from_yaml(std::string buffer) -> confluct {  // The function ... is never used. (CWE-561)
   auto data = YAML::Load(buffer);
   return {
     .i = data["i"].as<int>(),
     .hello = data["hello"].as<std::string>(),
     .arr = data["arr"].as<std::array<uint64_t, 3> >(),
     .map = data["map"].as<std::map<std::string, int> >(),
+  };
+}
+
+// Eat my extensible confake
+auto confluct_from_xml(std::string buffer) -> confluct {  // The function ... is never used. (CWE-561)
+  pugi::xml_document doc;
+  pugi::xml_parse_result result = doc.load_string(buffer.c_str());
+
+  if ( ! result ) {
+    spdlog::error("Parsing of ({}) failed with code ({})", buffer, result.description());
+    return {};
+  }
+
+  pugi::xpath_node the_i = doc.select_node("/config/i");
+  pugi::xpath_node the_hello = doc.select_node("/config/hello");
+  pugi::xpath_node_set the_arrs = doc.select_nodes("/config/arr");
+  pugi::xpath_node_set the_map = doc.select_nodes("/config/map/descendant-or-self::node()");
+  int i = atoi(the_i.node().child_value());
+  std::string hello{the_hello.node().child_value()};
+
+  std::array<uint64_t, 3> arr{};
+  int yuck = 0;
+  // Don't do this at home!
+  for (auto the_arr: the_arrs) arr[yuck++] = atoi(the_arr.node().child_value());  // GCOVR_EXCL_BR_LINE
+
+  std::map<std::string, int> map{};
+  // Don't do this at home too!
+  for (auto the_member: the_map) {  // GCOVR_EXCL_BR_START
+    auto value = the_member.node().child_value();
+    if (std::string{value} != "") map[the_member.node().name()] = atoi(value);
+  }  // GCOVR_EXCL_BR_STOP
+
+  return {
+    .i = i,
+    .hello = hello,
+    .arr = arr,
+    .map = map,
   };
 }
