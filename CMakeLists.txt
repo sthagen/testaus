@@ -6,40 +6,56 @@ include(cxx_language_version)
 
 option(ENABLE_DOCTESTS "Include doctest based tests in the library.
   Setting this to OFF will remove all doctest related code.
-  Tests in tests/*.cpp will still be enabled." ON)
+  Tests in tests/*.cpp will still be enabled."
+  ON)
 message(STATUS "ENABLE_DOCTESTS is (${ENABLE_DOCTESTS})")
 include(doctest)
 
 option(ENABLE_CATCH2 "Include Catch2 based tests in the library.
   Setting this to OFF will remove all catch2 related code.
-  Tests in tests/*.cpp will still be enabled." OFF)
+  Tests in tests/*.cpp will still be enabled."
+  OFF)
 message(STATUS "ENABLE_CATCH2 is (${ENABLE_CATCH2})")
 include(catch2)
 
 option(ENABLE_GLAZE "Include glaze json functionality in the library."
    ON)
+message(STATUS "ENABLE_GLAZE is (${ENABLE_GLAZE})")
 include(glaze)
 
+option(ENABLE_SPDLOG "Include spdlog log functionality in the library."
+   ON)
+message(STATUS "ENABLE_SPDLOG is (${ENABLE_SPDLOG})")
+include(spdlog)
+
 project(
-  doctest-covr-training
-  VERSION 2024.2.10
-  DESCRIPTION "Small multiple files doctest with gcovr training example."
+  implementation
+  VERSION 2024.2.18
+  DESCRIPTION "Small multiple files cmake and third-party lib inclusion training example."
   LANGUAGES CXX)
 
 include(CTest)
-option(ENABLE_COVERAGE "Enable coverage options. Setting this to OFF will disable coverage." ON)
+option(ENABLE_COVERAGE "Enable coverage options. Setting this to OFF will disable coverage."
+  ON)
 include(coverage_compiler_options)
 enable_testing()
 
 add_library(implementation STATIC src/implementation.cpp)
-target_link_libraries(implementation PRIVATE glaze::glaze)
+if(ENABLE_GLAZE)
+  target_link_libraries(implementation PUBLIC glaze::glaze)
+endif()
+if(ENABLE_SPDLOG)
+  target_link_libraries(implementation PUBLIC spdlog::spdlog)
+endif()
 
 add_executable(example example/main.cpp)
 target_link_libraries(example PRIVATE implementation)
 
 if(BUILD_TESTING)
   if(ENABLE_DOCTESTS)
-    add_executable(tests test/test_implementation.cpp)
+    add_executable(tests
+      test/test_main.cpp
+      test/test_implementation.cpp)
     target_link_libraries(tests PRIVATE doctest::doctest implementation)
     add_test(NAME tests COMMAND tests)
   endif()
