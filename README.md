@@ -57,7 +57,6 @@ Requirement already satisfied: lxml in /some/local/python/install/site-packages 
 Requirement already satisfied: pygments>=2.13.0 in /some/local/python/install/site-packages (from gcovr==7.0->-r test/requirements.txt (line 2)) (2.17.2)
 Requirement already satisfied: xmltodict<0.14.0,>=0.13.0 in /some/local/python/install/site-packages (from cppcheck-codequality==1.4.1->-r test/requirements.txt (line 3)) (0.13.0)
 Requirement already satisfied: MarkupSafe>=2.0 in /some/local/python/install/site-packages (from jinja2->gcovr==7.0->-r test/requirements.txt (line 2)) (2.1.5)
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Coverage -S . -B build-coverage -Wno-dev
 -- ENABLE_DOCTESTS is (ON)
 -- The CXX compiler identification is AppleClang 15.0.0.15000100
 -- Detecting CXX compiler ABI info
@@ -69,6 +68,8 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=Coverage -S . -B build-coverage -Wno-dev
 -- ENABLE_CATCH2 is (OFF)
 -- ENABLE_GLAZE is (ON)
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
+-- ENABLE_PUGIXML is (ON)
+-- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
@@ -83,7 +84,7 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=Coverage -S . -B build-coverage -Wno-dev
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (6.9s)
+-- Configuring done (7.9s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build-coverage
 cmake -G Ninja -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B build -Wno-dev
@@ -98,6 +99,8 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B build -Wno-dev
 -- ENABLE_CATCH2 is (OFF)
 -- ENABLE_GLAZE is (ON)
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
+-- ENABLE_PUGIXML is (ON)
+-- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
@@ -112,7 +115,7 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B build -Wno-dev
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (6.6s)
+-- Configuring done (7.9s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build
 ```
@@ -123,11 +126,24 @@ Running the example (without coverage instrumentation):
 ❯ make example
 cmake --build build --target example
 [0/2] Re-checking globbed directories...
-[44/44] Linking CXX executable example
+[46/46] Linking CXX executable example
 Please enter three integers separated by spaces: Thanks. Got it.
  triple_max(1, 2, 3) = 3
 
- ... and now for something completely differnt:
+YAML from JSON:
+---
+i: 287
+hello: Hello World
+arr:
+  - 1
+  - 2
+  - 3
+map:
+  one: 1
+  two: 2
+
+YAML from XPath:
+---
 i: 287
 hello: Hello World
 arr:
@@ -146,9 +162,9 @@ Static analysis of implementation:
 cmake --build build-coverage --target analysis
 [0/2] Re-checking globbed directories...
 [1/1] Running cppcheck for analysis - writing reports and logs to /Some/place/on/clone/machine/testaus/build-coverage/analysis/cppcheck.{log,report}.*
-[51] cppcheck_codequality INFO: No file location. Skipping the below issue:
+[36] cppcheck_codequality INFO: No file location. Skipping the below issue:
   Active checkers: 172/592 (use --checkers-report=<filename> to see details)
-[51] cppcheck_codequality INFO: Converted 7 CppCheck issues
+[36] cppcheck_codequality INFO: Converted 8 CppCheck issues
 [
     {
         "type": "issue",
@@ -158,12 +174,12 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Style"
         ],
-        "fingerprint": "01233e41246747993fa03469a2b5bf7e",
+        "fingerprint": "913256335ec29be744ceb4da0f834240",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 63,
+                    "line": 64,
                     "column": 7
                 }
             }
@@ -180,12 +196,12 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Performance"
         ],
-        "fingerprint": "6015d7ef528f202b7ba2134bfcfc2445",
+        "fingerprint": "239d3c469fa162515aacbfe9f1011ffc",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 86,
+                    "line": 85,
                     "column": 23
                 }
             }
@@ -202,12 +218,12 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Style"
         ],
-        "fingerprint": "6afadc466183a1f2f53e2c0829e4a9fb",
+        "fingerprint": "6746f8ddb719bf869f749d96131b6a81",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 11,
+                    "line": 12,
                     "column": 0
                 }
             }
@@ -224,12 +240,12 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Style"
         ],
-        "fingerprint": "b9f9d46be398dbf597620e7794dd945d",
+        "fingerprint": "9b0b8c39a5c620412317ad004e831b2d",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 27,
+                    "line": 28,
                     "column": 0
                 }
             }
@@ -246,12 +262,12 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Style"
         ],
-        "fingerprint": "c2878ae9fdf2943e508369f16942211b",
+        "fingerprint": "03eff5ce213d52acc16f728e7506f4e7",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 71,
+                    "line": 72,
                     "column": 0
                 }
             }
@@ -268,12 +284,12 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Style"
         ],
-        "fingerprint": "b64f8f0b002f0e5bef93fa8f30f4f33e",
+        "fingerprint": "2f72f6957c7c7ddd0fcd834cf0345a76",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 74,
+                    "line": 77,
                     "column": 0
                 }
             }
@@ -290,12 +306,34 @@ cmake --build build-coverage --target analysis
         "categories": [
             "Style"
         ],
-        "fingerprint": "202cb1e5e163b332ff17d9cc0e88dd07",
+        "fingerprint": "8d06a868db587d62ca9aa6c0b84deca5",
         "location": {
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
                     "line": 109,
+                    "column": 0
+                }
+            }
+        },
+        "content": {
+            "body": ""
+        }
+    },
+    {
+        "type": "issue",
+        "severity": "minor",
+        "check_name": "cppcheck[unusedFunction]",
+        "description": "The function 'confluct_from_xml' is never used. (CWE-561)",
+        "categories": [
+            "Style"
+        ],
+        "fingerprint": "a81f0a9f9b9adb2d7509627f5e6ce64d",
+        "location": {
+            "path": "src/implementation.cpp",
+            "positions": {
+                "begin": {
+                    "line": 120,
                     "column": 0
                 }
             }
@@ -313,34 +351,34 @@ Coverage target (implies building and executing the tests):
 ❯ make coverage
 cmake --build build-coverage --target coverage
 [0/2] Re-checking globbed directories...
-[46/47] Running ctest to excute tests
+[48/49] Running ctest to excute tests
 Test project /Some/place/on/clone/machine/testaus/build-coverage
     Start 1: tests
-1/1 Test #1: tests ............................   Passed    0.15 sec
+1/1 Test #1: tests ............................   Passed    0.21 sec
 
 100% tests passed, 0 tests failed out of 1
 
-Total Test time (real) =   0.16 sec
-[47/47] Executing gcovr to process coverage - open /Some/place/on/clone/machine/testaus/build-coverage/coverage/coverage_details.html to inspect results
+Total Test time (real) =   0.22 sec
+[49/49] Executing gcovr to process coverage - open /Some/place/on/clone/machine/testaus/build-coverage/coverage/coverage_details.html to inspect results
 (INFO) - MainThread - Reading coverage data...
 (INFO) - MainThread - Writing coverage report...
 Child returned 0
 {
-    "branch_covered": 46,
-    "branch_percent": 61.3,
-    "branch_total": 75,
+    "branch_covered": 64,
+    "branch_percent": 58.7,
+    "branch_total": 109,
     "files": [
         {
-            "branch_covered": 45,
-            "branch_percent": 61.6,
-            "branch_total": 73,
+            "branch_covered": 63,
+            "branch_percent": 58.9,
+            "branch_total": 107,
             "filename": "src/implementation.cpp",
-            "function_covered": 8,
+            "function_covered": 9,
             "function_percent": 100.0,
-            "function_total": 8,
-            "line_covered": 56,
+            "function_total": 9,
+            "line_covered": 79,
             "line_percent": 100.0,
-            "line_total": 56
+            "line_total": 79
         },
         {
             "branch_covered": 1,
@@ -355,13 +393,13 @@ Child returned 0
             "line_total": 2
         }
     ],
-    "function_covered": 12,
+    "function_covered": 13,
     "function_percent": 100.0,
-    "function_total": 12,
+    "function_total": 13,
     "gcovr/summary_format_version": "0.5",
-    "line_covered": 58,
+    "line_covered": 81,
     "line_percent": 100.0,
-    "line_total": 58,
+    "line_total": 81,
     "root": "../.."
 }
 ```
@@ -405,6 +443,8 @@ Using the default generator as generator and preparing coverage (leading to inst
 -- ENABLE_CATCH2 is (OFF)
 -- ENABLE_GLAZE is (ON)
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
+-- ENABLE_PUGIXML is (ON)
+-- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
@@ -419,7 +459,7 @@ Using the default generator as generator and preparing coverage (leading to inst
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (8.1s)
+-- Configuring done (10.2s)
 -- Generating done (0.5s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build-coverage
 
@@ -440,6 +480,8 @@ Using the `Ninja` backend and setting a release with debug symbols build type:
 -- ENABLE_CATCH2 is (OFF)
 -- ENABLE_GLAZE is (ON)
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
+-- ENABLE_PUGIXML is (ON)
+-- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
@@ -454,7 +496,7 @@ Using the `Ninja` backend and setting a release with debug symbols build type:
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (6.7s)
+-- Configuring done (8.0s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build
 ```
@@ -473,39 +515,42 @@ causes lengthy build - duration as well as log):
 [ 10%] Building CXX object _deps/spdlog-build/CMakeFiles/spdlog.dir/src/async.cpp.o
 [ 12%] Building CXX object _deps/spdlog-build/CMakeFiles/spdlog.dir/src/cfg.cpp.o
 [ 14%] Building CXX object _deps/spdlog-build/CMakeFiles/spdlog.dir/src/bundled_fmtlib_format.cpp.o
-[ 17%] Linking CXX static library libspdlog.a
-[ 17%] Built target spdlog
-[ 19%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/contrib/graphbuilder.cpp.o
-[ 21%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/contrib/graphbuilderadapter.cpp.o
-[ 23%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/binary.cpp.o
-[ 25%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/convert.cpp.o
-[ 27%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/depthguard.cpp.o
-[ 29%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/directives.cpp.o
-[ 31%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emit.cpp.o
-[ 34%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitfromevents.cpp.o
-[ 36%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitter.cpp.o
-[ 38%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitterstate.cpp.o
-[ 40%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitterutils.cpp.o
-[ 42%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/exceptions.cpp.o
-[ 44%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/exp.cpp.o
-[ 46%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/memory.cpp.o
-[ 48%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/node.cpp.o
-[ 51%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/node_data.cpp.o
-[ 53%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/nodebuilder.cpp.o
-[ 55%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/nodeevents.cpp.o
-[ 57%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/null.cpp.o
-[ 59%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/ostream_wrapper.cpp.o
-[ 61%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/parse.cpp.o
-[ 63%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/parser.cpp.o
-[ 65%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/regex_yaml.cpp.o
-[ 68%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scanner.cpp.o
-[ 70%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scanscalar.cpp.o
-[ 72%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scantag.cpp.o
-[ 74%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scantoken.cpp.o
-[ 76%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/simplekey.cpp.o
-[ 78%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/singledocparser.cpp.o
-[ 80%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/stream.cpp.o
-[ 82%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/tag.cpp.o
+[ 16%] Linking CXX static library libspdlog.a
+[ 16%] Built target spdlog
+[ 18%] Building CXX object _deps/pugixml-build/CMakeFiles/pugixml-static.dir/src/pugixml.cpp.o
+[ 20%] Linking CXX static library libpugixml.a
+[ 20%] Built target pugixml-static
+[ 22%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/contrib/graphbuilder.cpp.o
+[ 24%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/contrib/graphbuilderadapter.cpp.o
+[ 26%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/binary.cpp.o
+[ 28%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/convert.cpp.o
+[ 30%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/depthguard.cpp.o
+[ 32%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/directives.cpp.o
+[ 34%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emit.cpp.o
+[ 36%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitfromevents.cpp.o
+[ 38%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitter.cpp.o
+[ 40%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitterstate.cpp.o
+[ 42%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/emitterutils.cpp.o
+[ 44%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/exceptions.cpp.o
+[ 46%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/exp.cpp.o
+[ 48%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/memory.cpp.o
+[ 51%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/node.cpp.o
+[ 53%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/node_data.cpp.o
+[ 55%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/nodebuilder.cpp.o
+[ 57%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/nodeevents.cpp.o
+[ 59%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/null.cpp.o
+[ 61%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/ostream_wrapper.cpp.o
+[ 63%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/parse.cpp.o
+[ 65%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/parser.cpp.o
+[ 67%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/regex_yaml.cpp.o
+[ 69%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scanner.cpp.o
+[ 71%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scanscalar.cpp.o
+[ 73%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scantag.cpp.o
+[ 75%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/scantoken.cpp.o
+[ 77%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/simplekey.cpp.o
+[ 79%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/singledocparser.cpp.o
+[ 81%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/stream.cpp.o
+[ 83%] Building CXX object _deps/yaml-cpp-build/CMakeFiles/yaml-cpp.dir/src/tag.cpp.o
 [ 85%] Linking CXX static library libyaml-cpp.a
 [ 85%] Built target yaml-cpp
 [ 87%] Building CXX object CMakeFiles/implementation.dir/src/implementation.cpp.o
@@ -518,11 +563,11 @@ causes lengthy build - duration as well as log):
 [ 97%] Running ctest to excute tests
 Test project /Some/place/on/clone/machine/testaus/build-coverage
     Start 1: tests
-1/1 Test #1: tests ............................   Passed    0.26 sec
+1/1 Test #1: tests ............................   Passed    0.23 sec
 
 100% tests passed, 0 tests failed out of 1
 
-Total Test time (real) =   0.27 sec
+Total Test time (real) =   0.23 sec
 [ 97%] Built target execute_tests
 [100%] Executing gcovr to process coverage - open /Some/place/on/clone/machine/testaus/build-coverage/coverage/coverage_details.html to inspect results
 (INFO) - MainThread - Reading coverage data...
@@ -535,9 +580,9 @@ Analyze the source code (static analyzer cppcheck in this case):
 ```console
 ❯ cmake --build build-coverage --target analysis
 [100%] Running cppcheck for analysis - writing reports and logs to /Some/place/on/clone/machine/testaus/build-coverage/analysis/cppcheck.{log,report}.*
-[35] cppcheck_codequality INFO: No file location. Skipping the below issue:
+[33] cppcheck_codequality INFO: No file location. Skipping the below issue:
   Active checkers: 172/592 (use --checkers-report=<filename> to see details)
-[35] cppcheck_codequality INFO: Converted 7 CppCheck issues
+[33] cppcheck_codequality INFO: Converted 8 CppCheck issues
 [100%] Built target analysis
 ```
 
@@ -549,7 +594,7 @@ Display any analysis results (log and report):
        │ File: build-coverage/analysis/cppcheck.log.txt
 ───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────
    1   │ Checking example/main.cpp ...
-   2   │ 1/2 files checked 18% done
+   2   │ 1/2 files checked 31% done
    3   │ Checking src/implementation.cpp ...
    4   │ 2/2 files checked 100% done
 ───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -558,28 +603,31 @@ Display any analysis results (log and report):
 ───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────
    1   │ [{"type": "issue", "severity": "minor", "check_name": "cppcheck[duplicateBreak]", "description": "Consecutiv
        │ e return, break, continue, goto or throw statements are unnecessary. (CWE-561)", "categories": ["Style"], "f
-       │ ingerprint": "01233e41246747993fa03469a2b5bf7e", "location": {"path": "src/implementation.cpp", "positions":
-       │  {"begin": {"line": 63, "column": 7}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "ch
+       │ ingerprint": "913256335ec29be744ceb4da0f834240", "location": {"path": "src/implementation.cpp", "positions":
+       │  {"begin": {"line": 64, "column": 7}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "ch
        │ eck_name": "cppcheck[passedByValue]", "description": "Function parameter 'obj' should be passed by const ref
-       │ erence. (CWE-398)", "categories": ["Performance"], "fingerprint": "6015d7ef528f202b7ba2134bfcfc2445", "locat
-       │ ion": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 86, "column": 23}}}, "content": {"b
+       │ erence. (CWE-398)", "categories": ["Performance"], "fingerprint": "239d3c469fa162515aacbfe9f1011ffc", "locat
+       │ ion": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 85, "column": 23}}}, "content": {"b
        │ ody": ""}}, {"type": "issue", "severity": "minor", "check_name": "cppcheck[unusedFunction]", "description":
-       │ "The function 'spread_logic' is never used. (CWE-561)", "categories": ["Style"], "fingerprint": "6afadc46618
-       │ 3a1f2f53e2c0829e4a9fb", "location": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 11, "
+       │ "The function 'spread_logic' is never used. (CWE-561)", "categories": ["Style"], "fingerprint": "6746f8ddb71
+       │ 9bf869f749d96131b6a81", "location": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 12, "
        │ column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "check_name": "cppcheck[unus
        │ edFunction]", "description": "The function 'switch_logic' is never used. (CWE-561)", "categories": ["Style"]
-       │ , "fingerprint": "b9f9d46be398dbf597620e7794dd945d", "location": {"path": "src/implementation.cpp", "positio
-       │ ns": {"begin": {"line": 27, "column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor",
+       │ , "fingerprint": "9b0b8c39a5c620412317ad004e831b2d", "location": {"path": "src/implementation.cpp", "positio
+       │ ns": {"begin": {"line": 28, "column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor",
        │  "check_name": "cppcheck[unusedFunction]", "description": "The function 'to_json' is never used. (CWE-561)",
-       │  "categories": ["Style"], "fingerprint": "c2878ae9fdf2943e508369f16942211b", "location": {"path": "src/imple
-       │ mentation.cpp", "positions": {"begin": {"line": 71, "column": 0}}}, "content": {"body": ""}}, {"type": "issu
+       │  "categories": ["Style"], "fingerprint": "03eff5ce213d52acc16f728e7506f4e7", "location": {"path": "src/imple
+       │ mentation.cpp", "positions": {"begin": {"line": 72, "column": 0}}}, "content": {"body": ""}}, {"type": "issu
        │ e", "severity": "minor", "check_name": "cppcheck[unusedFunction]", "description": "The function 'impluct_fro
-       │ m_json' is never used. (CWE-561)", "categories": ["Style"], "fingerprint": "b64f8f0b002f0e5bef93fa8f30f4f33e
-       │ ", "location": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 74, "column": 0}}}, "conte
+       │ m_json' is never used. (CWE-561)", "categories": ["Style"], "fingerprint": "2f72f6957c7c7ddd0fcd834cf0345a76
+       │ ", "location": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 77, "column": 0}}}, "conte
        │ nt": {"body": ""}}, {"type": "issue", "severity": "minor", "check_name": "cppcheck[unusedFunction]", "descri
        │ ption": "The function 'confluct_from_yaml' is never used. (CWE-561)", "categories": ["Style"], "fingerprint"
-       │ : "202cb1e5e163b332ff17d9cc0e88dd07", "location": {"path": "src/implementation.cpp", "positions": {"begin":
-       │ {"line": 109, "column": 0}}}, "content": {"body": ""}}]
+       │ : "8d06a868db587d62ca9aa6c0b84deca5", "location": {"path": "src/implementation.cpp", "positions": {"begin":
+       │ {"line": 109, "column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "check_name":
+       │  "cppcheck[unusedFunction]", "description": "The function 'confluct_from_xml' is never used. (CWE-561)", "ca
+       │ tegories": ["Style"], "fingerprint": "a81f0a9f9b9adb2d7509627f5e6ce64d", "location": {"path": "src/implement
+       │ ation.cpp", "positions": {"begin": {"line": 120, "column": 0}}}, "content": {"body": ""}}]
 ───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────
        │ File: build-coverage/analysis/cppcheck.report.xml
@@ -592,33 +640,33 @@ Display any analysis results (log and report):
        │ statements are unnecessary." verbose="Consecutive return, break, continue, goto or throw statements are unne
        │ cessary. The second statement can never be executed, and so should be removed." cwe="561" file0="src/impleme
        │ ntation.cpp">
-   6   │             <location file="src/implementation.cpp" line="63" column="7"/>
+   6   │             <location file="src/implementation.cpp" line="64" column="7"/>
    7   │         </error>
    8   │         <error id="passedByValue" severity="performance" msg="Function parameter &apos;obj&apos; should be p
        │ assed by const reference." verbose="Parameter &apos;obj&apos; is passed by value. It could be passed as a co
        │ nst reference which is usually faster and recommended in C++." cwe="398" file0="src/implementation.cpp">
-   9   │             <location file="src/implementation.cpp" line="86" column="23" info="Function parameter &apos;obj
+   9   │             <location file="src/implementation.cpp" line="85" column="23" info="Function parameter &apos;obj
        │ &apos; should be passed by const reference."/>
   10   │             <symbol>obj</symbol>
   11   │         </error>
   12   │         <error id="unusedFunction" severity="style" msg="The function &apos;spread_logic&apos; is never used
        │ ." verbose="The function &apos;spread_logic&apos; is never used." cwe="561">
-  13   │             <location file="src/implementation.cpp" line="11" column="0"/>
+  13   │             <location file="src/implementation.cpp" line="12" column="0"/>
   14   │             <symbol>spread_logic</symbol>
   15   │         </error>
   16   │         <error id="unusedFunction" severity="style" msg="The function &apos;switch_logic&apos; is never used
        │ ." verbose="The function &apos;switch_logic&apos; is never used." cwe="561">
-  17   │             <location file="src/implementation.cpp" line="27" column="0"/>
+  17   │             <location file="src/implementation.cpp" line="28" column="0"/>
   18   │             <symbol>switch_logic</symbol>
   19   │         </error>
   20   │         <error id="unusedFunction" severity="style" msg="The function &apos;to_json&apos; is never used." ve
        │ rbose="The function &apos;to_json&apos; is never used." cwe="561">
-  21   │             <location file="src/implementation.cpp" line="71" column="0"/>
+  21   │             <location file="src/implementation.cpp" line="72" column="0"/>
   22   │             <symbol>to_json</symbol>
   23   │         </error>
   24   │         <error id="unusedFunction" severity="style" msg="The function &apos;impluct_from_json&apos; is never
        │  used." verbose="The function &apos;impluct_from_json&apos; is never used." cwe="561">
-  25   │             <location file="src/implementation.cpp" line="74" column="0"/>
+  25   │             <location file="src/implementation.cpp" line="77" column="0"/>
   26   │             <symbol>impluct_from_json</symbol>
   27   │         </error>
   28   │         <error id="unusedFunction" severity="style" msg="The function &apos;confluct_from_yaml&apos; is neve
@@ -626,13 +674,17 @@ Display any analysis results (log and report):
   29   │             <location file="src/implementation.cpp" line="109" column="0"/>
   30   │             <symbol>confluct_from_yaml</symbol>
   31   │         </error>
-  32   │         <error id="checkersReport" severity="information" msg="Active checkers: 172/592 (use --checkers-repo
+  32   │         <error id="unusedFunction" severity="style" msg="The function &apos;confluct_from_xml&apos; is never
+       │  used." verbose="The function &apos;confluct_from_xml&apos; is never used." cwe="561">
+  33   │             <location file="src/implementation.cpp" line="120" column="0"/>
+  34   │             <symbol>confluct_from_xml</symbol>
+  35   │         </error>
+  36   │         <error id="checkersReport" severity="information" msg="Active checkers: 172/592 (use --checkers-repo
        │ rt=&lt;filename&gt; to see details)" verbose="Active checkers: 172/592 (use --checkers-report=&lt;filename&g
        │ t; to see details)"/>
-  33   │     </errors>
-  34   │ </results>
+  37   │     </errors>
+  38   │ </results>
 ───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-(END)
 ```
 
 ## Status
