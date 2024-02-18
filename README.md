@@ -39,6 +39,30 @@ Please kindly submit issues at https://todo.sr.ht/~sthagen/testaus or write plai
 
 ## Development
 
+The content of the etc tree together with the top level cmake lists file is the backbone of this repository.
+
+```console
+❯ tree etc
+etc
+├── cmake
+│   ├── analysis.cmake
+│   ├── catch2.cmake
+│   ├── coverage.cmake
+│   ├── coverage_compiler_options.cmake
+│   ├── cxx_language_version.cmake
+│   ├── doctest.cmake
+│   ├── execute_tests.cmake
+│   ├── gcovr.cmake
+│   ├── glaze.cmake
+│   ├── pugixml.cmake
+│   ├── spdlog.cmake
+│   └── yaml-cpp.cmake
+└── gcovr
+    └── gcovr.cfg.in
+
+3 directories, 13 files
+```
+
 ### Quickstart
 
 There is a top level `Makefile` which you can use to bootstrap and trigger CMake commands:
