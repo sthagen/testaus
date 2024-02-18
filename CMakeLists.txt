@@ -23,6 +23,11 @@ option(ENABLE_GLAZE "Include glaze json functionality in the library."
 message(STATUS "ENABLE_GLAZE is (${ENABLE_GLAZE})")
 include(glaze)
 
+option(ENABLE_PUGIXML "Include pugixml xml functionality in the library."
+   ON)
+message(STATUS "ENABLE_PUGIXML is (${ENABLE_PUGIXML})")
+include(pugixml)
+
 option(ENABLE_YAML_CPP "Include yaml-cpp yaml functionality in the library."
    ON)
 message(STATUS "ENABLE_YAML_CPP is (${ENABLE_YAML_CPP})")
@@ -49,6 +54,10 @@ add_library(implementation STATIC src/implementation.cpp)
 
 if(ENABLE_GLAZE)
   target_link_libraries(implementation PUBLIC glaze::glaze)
+endif()
+
+if(ENABLE_PUGIXML)
+  target_link_libraries(implementation PUBLIC pugixml)
 endif()
 
 if(ENABLE_YAML_CPP)
