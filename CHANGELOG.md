@@ -1,5 +1,14 @@
 # Changes:
 
+2024.2.18
+:    - Adapted top level cmake lists file to use spdlog and yaml-cpp
+- Added implementation and test of yaml backed services
+- Added spdlog and yaml-cpp cmake modules based on FetchContent
+- Added spdlog to implementation and json loader
+- Added the shallow clone attribute to catch2 and doctest cmake modules
+- Amended the example to use the yaml-cpp library backed parts of the implementation
+- Split of tests into stub with only main and all real tests separate (doctest)
+
 2024.2.17
 :    - Added a glaze cmake module
 - Added a glaze using part in implementation
