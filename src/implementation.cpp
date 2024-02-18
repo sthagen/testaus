@@ -1,5 +1,6 @@
 #include <glaze/glaze.hpp>
 #include <spdlog/spdlog.h>
+#include <yaml-cpp/yaml.h>
 
 #include "implementation.h"
 
@@ -70,7 +71,7 @@ auto switch_logic(int a) -> int {
 auto to_json(impluct obj) -> std::string { return glz::write_json(obj); }
 
 // Eat my cake
-auto impluct_from(std::string buffer) -> impluct {
+auto impluct_from_json(std::string buffer) -> impluct {
   impluct obj{};
   auto ec = glz::read_json(obj, buffer); // populates object from buffer
   if (ec) {
@@ -79,4 +80,38 @@ auto impluct_from(std::string buffer) -> impluct {
     spdlog::info("Parsing succeeded - to demonstrate arc/branches for log of constant content");
   }
   return obj;
+}
+
+// Bake me a yaml string
+auto to_yaml(confluct obj) -> std::string {
+  YAML::Node node;
+  node["i"] = obj.i;
+  node["hello"] = obj.hello;
+  node["arr"] = obj.arr;
+  node["map"] = obj.map;
+
+  std::ostringstream os;
+  os << node;
+  return os.str();
+}
+
+// Eat my json confake
+auto confluct_from_json(std::string buffer) -> confluct {
+  confluct obj{};
+  auto ec = glz::read_json(obj, buffer); // populates object from buffer
+  if (ec) {
+    spdlog::error("Parsing of ({}) failed with code ({})", buffer, ec);
+  }
+  return obj;
+}
+
+// Eat my yummie confake
+auto confluct_from_yaml(std::string buffer) -> confluct {
+  auto data = YAML::Load(buffer);
+  return {
+    .i = data["i"].as<int>(),
+    .hello = data["hello"].as<std::string>(),
+    .arr = data["arr"].as<std::array<uint64_t, 3> >(),
+    .map = data["map"].as<std::map<std::string, int> >(),
+  };
 }
