@@ -23,6 +23,11 @@ option(ENABLE_GLAZE "Include glaze json functionality in the library."
 message(STATUS "ENABLE_GLAZE is (${ENABLE_GLAZE})")
 include(glaze)
 
+option(ENABLE_YAML_CPP "Include yaml-cpp yaml functionality in the library."
+   ON)
+message(STATUS "ENABLE_YAML_CPP is (${ENABLE_YAML_CPP})")
+include(yaml-cpp)
+
 option(ENABLE_SPDLOG "Include spdlog log functionality in the library."
    ON)
 message(STATUS "ENABLE_SPDLOG is (${ENABLE_SPDLOG})")
@@ -41,9 +46,15 @@ include(coverage_compiler_options)
 enable_testing()
 
 add_library(implementation STATIC src/implementation.cpp)
+
 if(ENABLE_GLAZE)
   target_link_libraries(implementation PUBLIC glaze::glaze)
 endif()
+
+if(ENABLE_YAML_CPP)
+  target_link_libraries(implementation PUBLIC yaml-cpp)
+endif()
+
 if(ENABLE_SPDLOG)
   target_link_libraries(implementation PUBLIC spdlog::spdlog)
 endif()
