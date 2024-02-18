@@ -1,5 +1,12 @@
 # Changes:
 
+2024.2.19
+:    - Added pugixml cmake module
+- Added pugixml to implementation and test
+- Added pugixml to top level cmake lists file
+- Added xml parsing to example
+- Moved gcovr configuration template into dedicated etc dir
+
 2024.2.18
 :    - Adapted top level cmake lists file to use spdlog and yaml-cpp
 - Added implementation and test of yaml backed services
