@@ -39,7 +39,7 @@ Please kindly submit issues at https://todo.sr.ht/~sthagen/testaus or write plai
 
 ## Development
 
-The content of the etc tree together with the top level cmake lists file is the backbone of this repository.
+The content of the `etc` directory tree and the top level cmake lists file is the backbone of this repository.
 
 ```console
 ❯ tree etc
@@ -62,6 +62,22 @@ etc
 
 3 directories, 13 files
 ```
+
+The other directories are suggestions that we have to make as the cmake dance requires specific names.
+
+The header and implementation files are only examples to show coverage and static analysis mechanisms.
+
+### TL; DR;
+
+Executing the following command should clearly expose most material to inspect and provide a working starter example.
+
+```console
+make distclean setup coverage analysis
+```
+
+Executing this command on some random developer machine takes less than 30 seconds.
+
+Note: The existing `test/test_implementation_catch2.cpp` file is not used, because of the switch in the top level cmake lists file. That test file - if solely enabled instead of doctest harness - should result in very poor coverage.
 
 ### Quickstart
 
