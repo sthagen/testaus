@@ -56,11 +56,13 @@ etc
 │   ├── glaze.cmake
 │   ├── pugixml.cmake
 │   ├── spdlog.cmake
+│   ├── stduuid.cmake
+│   ├── tomlplusplus.cmake
 │   └── yaml-cpp.cmake
 └── gcovr
     └── gcovr.cfg.in
 
-3 directories, 13 files
+3 directories, 15 files
 ```
 
 The other directories are suggestions that we have to make as the cmake dance requires specific names.
@@ -75,7 +77,8 @@ Executing the following command should clearly expose most material to inspect a
 make distclean setup coverage analysis
 ```
 
-Executing this command on some random developer machine takes less than 30 seconds.
+Executing this command on some random developer machine takes around 30 seconds.
+In case you are in an enterprise compute environment this duration can easily become more than 10 minutes depending on the endpoint security tools.
 
 Note: The existing `test/test_implementation_catch2.cpp` file is not used, because of the switch in the top level cmake lists file. That test file - if solely enabled instead of doctest harness - should result in very poor coverage.
 
@@ -97,6 +100,7 @@ Requirement already satisfied: lxml in /some/local/python/install/site-packages 
 Requirement already satisfied: pygments>=2.13.0 in /some/local/python/install/site-packages (from gcovr==7.0->-r test/requirements.txt (line 2)) (2.17.2)
 Requirement already satisfied: xmltodict<0.14.0,>=0.13.0 in /some/local/python/install/site-packages (from cppcheck-codequality==1.4.1->-r test/requirements.txt (line 3)) (0.13.0)
 Requirement already satisfied: MarkupSafe>=2.0 in /some/local/python/install/site-packages (from jinja2->gcovr==7.0->-r test/requirements.txt (line 2)) (2.1.5)
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Coverage -S . -B build-coverage -Wno-dev
 -- ENABLE_DOCTESTS is (ON)
 -- The CXX compiler identification is AppleClang 15.0.0.15000100
 -- Detecting CXX compiler ABI info
@@ -110,8 +114,12 @@ Requirement already satisfied: MarkupSafe>=2.0 in /some/local/python/install/sit
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
 -- ENABLE_PUGIXML is (ON)
 -- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
+-- ENABLE_TOMLPLUSPLUS is (ON)
+-- tomplpusplus v3.4.0 enabled and loaded - use tomplpusplus in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
+-- ENABLE_STDUUID is (ON)
+-- stduuid v1.2.3 enabled and loaded - use stduuid in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
 -- Build spdlog: 1.13.0
 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
@@ -120,12 +128,13 @@ Requirement already satisfied: MarkupSafe>=2.0 in /some/local/python/install/sit
 -- Build type: Coverage
 -- spdlog v1.13.0 enabled and loaded - use spdlog::spdlog in your target_link_library calls
 -- coverage options set - use include(gcovr) or similar for processing of test coverage data
+-- Added /Some/place/on/clone/machine/testaus/build-coverage/_deps/tomplpusplus-src/include/ as include
 -- gcovr configured (cf. build/gcovr.cfg)
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (7.9s)
--- Generating done (0.0s)
+-- Configuring done (12.7s)
+-- Generating done (0.1s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build-coverage
 cmake -G Ninja -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B build -Wno-dev
 -- ENABLE_DOCTESTS is (ON)
@@ -141,8 +150,12 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B build -Wno-dev
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
 -- ENABLE_PUGIXML is (ON)
 -- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
+-- ENABLE_TOMLPLUSPLUS is (ON)
+-- tomplpusplus v3.4.0 enabled and loaded - use tomplpusplus in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
+-- ENABLE_STDUUID is (ON)
+-- stduuid v1.2.3 enabled and loaded - use stduuid in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
 -- Build spdlog: 1.13.0
 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
@@ -151,11 +164,12 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=ReleaseWithDeb -S . -B build -Wno-dev
 -- Build type: ReleaseWithDeb
 -- spdlog v1.13.0 enabled and loaded - use spdlog::spdlog in your target_link_library calls
 -- coverage options set - use include(gcovr) or similar for processing of test coverage data
+-- Added /Some/place/on/clone/machine/testaus/build/_deps/tomplpusplus-src/include/ as include
 -- gcovr configured (cf. build/gcovr.cfg)
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (7.9s)
+-- Configuring done (11.3s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build
 ```
@@ -193,6 +207,8 @@ arr:
 map:
   one: 1
   two: 2
+
+
 ```
 
 Static analysis of implementation:
@@ -204,7 +220,7 @@ cmake --build build-coverage --target analysis
 [1/1] Running cppcheck for analysis - writing reports and logs to /Some/place/on/clone/machine/testaus/build-coverage/analysis/cppcheck.{log,report}.*
 [36] cppcheck_codequality INFO: No file location. Skipping the below issue:
   Active checkers: 172/592 (use --checkers-report=<filename> to see details)
-[36] cppcheck_codequality INFO: Converted 8 CppCheck issues
+[36] cppcheck_codequality INFO: Converted 10 CppCheck issues
 [
     {
         "type": "issue",
@@ -219,7 +235,7 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 64,
+                    "line": 68,
                     "column": 7
                 }
             }
@@ -241,7 +257,7 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 85,
+                    "line": 94,
                     "column": 23
                 }
             }
@@ -263,7 +279,7 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 12,
+                    "line": 16,
                     "column": 0
                 }
             }
@@ -285,7 +301,7 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 28,
+                    "line": 32,
                     "column": 0
                 }
             }
@@ -307,7 +323,7 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 72,
+                    "line": 76,
                     "column": 0
                 }
             }
@@ -329,7 +345,29 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 77,
+                    "line": 81,
+                    "column": 0
+                }
+            }
+        },
+        "content": {
+            "body": ""
+        }
+    },
+    {
+        "type": "issue",
+        "severity": "minor",
+        "check_name": "cppcheck[unusedFunction]",
+        "description": "The function 'confluct_from_toml' is never used. (CWE-561)",
+        "categories": [
+            "Style"
+        ],
+        "fingerprint": "dfae1697d5c50304ad9351013c621e4c",
+        "location": {
+            "path": "src/implementation.cpp",
+            "positions": {
+                "begin": {
+                    "line": 118,
                     "column": 0
                 }
             }
@@ -351,7 +389,7 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 109,
+                    "line": 145,
                     "column": 0
                 }
             }
@@ -373,7 +411,29 @@ cmake --build build-coverage --target analysis
             "path": "src/implementation.cpp",
             "positions": {
                 "begin": {
-                    "line": 120,
+                    "line": 156,
+                    "column": 0
+                }
+            }
+        },
+        "content": {
+            "body": ""
+        }
+    },
+    {
+        "type": "issue",
+        "severity": "minor",
+        "check_name": "cppcheck[unusedFunction]",
+        "description": "The function 'uuid4' is never used. (CWE-561)",
+        "categories": [
+            "Style"
+        ],
+        "fingerprint": "33e042490425fe1d06a179fe3bf34255",
+        "location": {
+            "path": "src/implementation.cpp",
+            "positions": {
+                "begin": {
+                    "line": 193,
                     "column": 0
                 }
             }
@@ -394,31 +454,32 @@ cmake --build build-coverage --target coverage
 [48/49] Running ctest to excute tests
 Test project /Some/place/on/clone/machine/testaus/build-coverage
     Start 1: tests
-1/1 Test #1: tests ............................   Passed    0.21 sec
+1/1 Test #1: tests ............................   Passed    0.22 sec
 
 100% tests passed, 0 tests failed out of 1
 
 Total Test time (real) =   0.22 sec
-[49/49] Executing gcovr to process coverage - open /Some/place/on/clone/machine/testaus/build-coverage/coverage/coverage_details.html to inspect results
+[49/49] Executing gcovr to process coverage - open 
+        /Some/place/on/clone/machine/testaus/build-coverage/coverage/coverage_details.html to inspect results
 (INFO) - MainThread - Reading coverage data...
 (INFO) - MainThread - Writing coverage report...
 Child returned 0
 {
-    "branch_covered": 64,
-    "branch_percent": 58.7,
-    "branch_total": 109,
+    "branch_covered": 89,
+    "branch_percent": 56.7,
+    "branch_total": 157,
     "files": [
         {
-            "branch_covered": 63,
-            "branch_percent": 58.9,
-            "branch_total": 107,
+            "branch_covered": 88,
+            "branch_percent": 56.8,
+            "branch_total": 155,
             "filename": "src/implementation.cpp",
-            "function_covered": 9,
+            "function_covered": 12,
             "function_percent": 100.0,
-            "function_total": 9,
-            "line_covered": 79,
+            "function_total": 12,
+            "line_covered": 110,
             "line_percent": 100.0,
-            "line_total": 79
+            "line_total": 110
         },
         {
             "branch_covered": 1,
@@ -433,13 +494,13 @@ Child returned 0
             "line_total": 2
         }
     ],
-    "function_covered": 13,
+    "function_covered": 16,
     "function_percent": 100.0,
-    "function_total": 13,
+    "function_total": 16,
     "gcovr/summary_format_version": "0.5",
-    "line_covered": 81,
+    "line_covered": 112,
     "line_percent": 100.0,
-    "line_total": 81,
+    "line_total": 112,
     "root": "../.."
 }
 ```
@@ -485,8 +546,12 @@ Using the default generator as generator and preparing coverage (leading to inst
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
 -- ENABLE_PUGIXML is (ON)
 -- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
+-- ENABLE_TOMLPLUSPLUS is (ON)
+-- tomplpusplus v3.4.0 enabled and loaded - use tomplpusplus in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
+-- ENABLE_STDUUID is (ON)
+-- stduuid v1.2.3 enabled and loaded - use stduuid in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
 -- Build spdlog: 1.13.0
 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
@@ -495,14 +560,14 @@ Using the default generator as generator and preparing coverage (leading to inst
 -- Build type: Coverage
 -- spdlog v1.13.0 enabled and loaded - use spdlog::spdlog in your target_link_library calls
 -- coverage options set - use include(gcovr) or similar for processing of test coverage data
+-- Added /Some/place/on/clone/machine/testaus/build-coverage/_deps/tomplpusplus-src/include/ as include
 -- gcovr configured (cf. build/gcovr.cfg)
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (10.2s)
--- Generating done (0.5s)
+-- Configuring done (11.9s)
+-- Generating done (0.6s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build-coverage
-
 ```
 
 Using the `Ninja` backend and setting a release with debug symbols build type:
@@ -522,8 +587,12 @@ Using the `Ninja` backend and setting a release with debug symbols build type:
 -- glaze v2.1.4 enabled and loaded - use glaze::glaze in your target_link_library calls
 -- ENABLE_PUGIXML is (ON)
 -- pugixml v1.14 enabled and loaded - use pugixml in your target_link_library calls
+-- ENABLE_TOMLPLUSPLUS is (ON)
+-- tomplpusplus v3.4.0 enabled and loaded - use tomplpusplus in your target_link_library calls
 -- ENABLE_YAML_CPP is (ON)
 -- yaml-cpp 0.8.0 enabled and loaded - use yaml-cpp in your target_link_library calls
+-- ENABLE_STDUUID is (ON)
+-- stduuid v1.2.3 enabled and loaded - use stduuid in your target_link_library calls
 -- ENABLE_SPDLOG is (ON)
 -- Build spdlog: 1.13.0
 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
@@ -532,11 +601,12 @@ Using the `Ninja` backend and setting a release with debug symbols build type:
 -- Build type: ReleaseWithDeb
 -- spdlog v1.13.0 enabled and loaded - use spdlog::spdlog in your target_link_library calls
 -- coverage options set - use include(gcovr) or similar for processing of test coverage data
+-- Added /Some/place/on/clone/machine/testaus/build/_deps/tomplpusplus-src/include/ as include
 -- gcovr configured (cf. build/gcovr.cfg)
 -- Added execute_tests target
 -- Added coverage target
 -- Added analysis target
--- Configuring done (8.0s)
+-- Configuring done (11.3s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Some/place/on/clone/machine/testaus/build
 ```
@@ -609,7 +679,7 @@ Test project /Some/place/on/clone/machine/testaus/build-coverage
 
 Total Test time (real) =   0.23 sec
 [ 97%] Built target execute_tests
-[100%] Executing gcovr to process coverage - open /Some/place/on/clone/machine/testaus/build-coverage/coverage/coverage_details.html to inspect results
+[100%] Executing gcovr to process coverage - open /Some/place/on/clone/machine/build-coverage/coverage/coverage_details.html to inspect results
 (INFO) - MainThread - Reading coverage data...
 (INFO) - MainThread - Writing coverage report...
 [100%] Built target coverage
@@ -622,109 +692,114 @@ Analyze the source code (static analyzer cppcheck in this case):
 [100%] Running cppcheck for analysis - writing reports and logs to /Some/place/on/clone/machine/testaus/build-coverage/analysis/cppcheck.{log,report}.*
 [33] cppcheck_codequality INFO: No file location. Skipping the below issue:
   Active checkers: 172/592 (use --checkers-report=<filename> to see details)
-[33] cppcheck_codequality INFO: Converted 8 CppCheck issues
+[34] cppcheck_codequality INFO: Converted 10 CppCheck issues
 [100%] Built target analysis
 ```
 
 Display any analysis results (log and report):
 
 ```console
-% bat build-coverage/analysis/cppcheck.{log,report}.*
-───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ bat build-coverage/analysis/cppcheck.log.txt
+───────┬─────────────────────────────────────────────────────────────────────────────────────────
        │ File: build-coverage/analysis/cppcheck.log.txt
-───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+───────┼─────────────────────────────────────────────────────────────────────────────────────────
    1   │ Checking example/main.cpp ...
-   2   │ 1/2 files checked 31% done
+   2   │ 1/2 files checked 25% done
    3   │ Checking src/implementation.cpp ...
    4   │ 2/2 files checked 100% done
-───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-       │ File: build-coverage/analysis/cppcheck.report.json
-───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-   1   │ [{"type": "issue", "severity": "minor", "check_name": "cppcheck[duplicateBreak]", "description": "Consecutiv
-       │ e return, break, continue, goto or throw statements are unnecessary. (CWE-561)", "categories": ["Style"], "f
-       │ ingerprint": "913256335ec29be744ceb4da0f834240", "location": {"path": "src/implementation.cpp", "positions":
-       │  {"begin": {"line": 64, "column": 7}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "ch
-       │ eck_name": "cppcheck[passedByValue]", "description": "Function parameter 'obj' should be passed by const ref
-       │ erence. (CWE-398)", "categories": ["Performance"], "fingerprint": "239d3c469fa162515aacbfe9f1011ffc", "locat
-       │ ion": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 85, "column": 23}}}, "content": {"b
-       │ ody": ""}}, {"type": "issue", "severity": "minor", "check_name": "cppcheck[unusedFunction]", "description":
-       │ "The function 'spread_logic' is never used. (CWE-561)", "categories": ["Style"], "fingerprint": "6746f8ddb71
-       │ 9bf869f749d96131b6a81", "location": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 12, "
-       │ column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "check_name": "cppcheck[unus
-       │ edFunction]", "description": "The function 'switch_logic' is never used. (CWE-561)", "categories": ["Style"]
-       │ , "fingerprint": "9b0b8c39a5c620412317ad004e831b2d", "location": {"path": "src/implementation.cpp", "positio
-       │ ns": {"begin": {"line": 28, "column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor",
-       │  "check_name": "cppcheck[unusedFunction]", "description": "The function 'to_json' is never used. (CWE-561)",
-       │  "categories": ["Style"], "fingerprint": "03eff5ce213d52acc16f728e7506f4e7", "location": {"path": "src/imple
-       │ mentation.cpp", "positions": {"begin": {"line": 72, "column": 0}}}, "content": {"body": ""}}, {"type": "issu
-       │ e", "severity": "minor", "check_name": "cppcheck[unusedFunction]", "description": "The function 'impluct_fro
-       │ m_json' is never used. (CWE-561)", "categories": ["Style"], "fingerprint": "2f72f6957c7c7ddd0fcd834cf0345a76
-       │ ", "location": {"path": "src/implementation.cpp", "positions": {"begin": {"line": 77, "column": 0}}}, "conte
-       │ nt": {"body": ""}}, {"type": "issue", "severity": "minor", "check_name": "cppcheck[unusedFunction]", "descri
-       │ ption": "The function 'confluct_from_yaml' is never used. (CWE-561)", "categories": ["Style"], "fingerprint"
-       │ : "8d06a868db587d62ca9aa6c0b84deca5", "location": {"path": "src/implementation.cpp", "positions": {"begin":
-       │ {"line": 109, "column": 0}}}, "content": {"body": ""}}, {"type": "issue", "severity": "minor", "check_name":
-       │  "cppcheck[unusedFunction]", "description": "The function 'confluct_from_xml' is never used. (CWE-561)", "ca
-       │ tegories": ["Style"], "fingerprint": "a81f0a9f9b9adb2d7509627f5e6ce64d", "location": {"path": "src/implement
-       │ ation.cpp", "positions": {"begin": {"line": 120, "column": 0}}}, "content": {"body": ""}}]
-───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+───────┴─────────────────────────────────────────────────────────────────────────────────────────
+```
+
+```console
+❯ jq . build-coverage/analysis/cppcheck.report.json | bat -l json
+───────┬─────────────────────────────────────────────────────────────────────────────────────────
+       │ STDIN
+───────┼─────────────────────────────────────────────────────────────────────────────────────────
+   1   │ [
+   2   │   {
+   3   │     "type": "issue",
+   4   │     "severity": "minor",
+   5   │     "check_name": "cppcheck[duplicateBreak]",
+   6   │     "description": "Consecutive return, break, continue, goto or throw statements are un
+       │ necessary. (CWE-561)",
+   7   │     "categories": [
+   8   │       "Style"
+   9   │     ],
+  10   │     "fingerprint": "913256335ec29be744ceb4da0f834240",
+  11   │     "location": {
+  12   │       "path": "src/implementation.cpp",
+  13   │       "positions": {
+  14   │         "begin": {
+  15   │           "line": 68,
+  16   │           "column": 7
+  17   │         }
+  18   │       }
+  19   │     },
+  20   │     "content": {
+  21   │       "body": ""
+  22   │     }
+  23   │   },
+ ...
+ 200   │   {
+ 201   │     "type": "issue",
+ 202   │     "severity": "minor",
+ 203   │     "check_name": "cppcheck[unusedFunction]",
+ 204   │     "description": "The function 'uuid4' is never used. (CWE-561)",
+ 205   │     "categories": [
+ 206   │       "Style"
+ 207   │     ],
+ 208   │     "fingerprint": "33e042490425fe1d06a179fe3bf34255",
+ 209   │     "location": {
+ 210   │       "path": "src/implementation.cpp",
+ 211   │       "positions": {
+ 212   │         "begin": {
+ 213   │           "line": 193,
+ 214   │           "column": 0
+ 215   │         }
+ 216   │       }
+ 217   │     },
+ 218   │     "content": {
+ 219   │       "body": ""
+ 220   │     }
+ 221   │   }
+ 222   │ ]
+ ```
+
+```console
+❯ bat build-coverage/analysis/cppcheck.report.xml
+───────┬─────────────────────────────────────────────────────────────────────────────────────────
        │ File: build-coverage/analysis/cppcheck.report.xml
-───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+───────┼─────────────────────────────────────────────────────────────────────────────────────────
    1   │ <?xml version="1.0" encoding="UTF-8"?>
    2   │ <results version="2">
    3   │     <cppcheck version="2.13.0"/>
    4   │     <errors>
-   5   │         <error id="duplicateBreak" severity="style" msg="Consecutive return, break, continue, goto or throw
-       │ statements are unnecessary." verbose="Consecutive return, break, continue, goto or throw statements are unne
-       │ cessary. The second statement can never be executed, and so should be removed." cwe="561" file0="src/impleme
-       │ ntation.cpp">
-   6   │             <location file="src/implementation.cpp" line="64" column="7"/>
+   5   │         <error id="duplicateBreak" severity="style" msg="Consecutive return, break, cont
+       │ inue, goto or throw statements are unnecessary." verbose="Consecutive return, break, con
+       │ tinue, goto or throw statements are unnecessary. The second statement can never be execu
+       │ ted, and so should be removed." cwe="561" file0="src/implementation.cpp">
+   6   │             <location file="src/implementation.cpp" line="68" column="7"/>
    7   │         </error>
-   8   │         <error id="passedByValue" severity="performance" msg="Function parameter &apos;obj&apos; should be p
-       │ assed by const reference." verbose="Parameter &apos;obj&apos; is passed by value. It could be passed as a co
-       │ nst reference which is usually faster and recommended in C++." cwe="398" file0="src/implementation.cpp">
-   9   │             <location file="src/implementation.cpp" line="85" column="23" info="Function parameter &apos;obj
-       │ &apos; should be passed by const reference."/>
+   8   │         <error id="passedByValue" severity="performance" msg="Function parameter &apos;o
+       │ bj&apos; should be passed by const reference." verbose="Parameter &apos;obj&apos; is pas
+       │ sed by value. It could be passed as a const reference which is usually faster and recomm
+       │ ended in C++." cwe="398" file0="src/implementation.cpp">
+   9   │             <location file="src/implementation.cpp" line="94" column="23" info="Function
+       │  parameter &apos;obj&apos; should be passed by const reference."/>
   10   │             <symbol>obj</symbol>
   11   │         </error>
-  12   │         <error id="unusedFunction" severity="style" msg="The function &apos;spread_logic&apos; is never used
-       │ ." verbose="The function &apos;spread_logic&apos; is never used." cwe="561">
-  13   │             <location file="src/implementation.cpp" line="12" column="0"/>
-  14   │             <symbol>spread_logic</symbol>
-  15   │         </error>
-  16   │         <error id="unusedFunction" severity="style" msg="The function &apos;switch_logic&apos; is never used
-       │ ." verbose="The function &apos;switch_logic&apos; is never used." cwe="561">
-  17   │             <location file="src/implementation.cpp" line="28" column="0"/>
-  18   │             <symbol>switch_logic</symbol>
-  19   │         </error>
-  20   │         <error id="unusedFunction" severity="style" msg="The function &apos;to_json&apos; is never used." ve
-       │ rbose="The function &apos;to_json&apos; is never used." cwe="561">
-  21   │             <location file="src/implementation.cpp" line="72" column="0"/>
-  22   │             <symbol>to_json</symbol>
-  23   │         </error>
-  24   │         <error id="unusedFunction" severity="style" msg="The function &apos;impluct_from_json&apos; is never
-       │  used." verbose="The function &apos;impluct_from_json&apos; is never used." cwe="561">
-  25   │             <location file="src/implementation.cpp" line="77" column="0"/>
-  26   │             <symbol>impluct_from_json</symbol>
-  27   │         </error>
-  28   │         <error id="unusedFunction" severity="style" msg="The function &apos;confluct_from_yaml&apos; is neve
-       │ r used." verbose="The function &apos;confluct_from_yaml&apos; is never used." cwe="561">
-  29   │             <location file="src/implementation.cpp" line="109" column="0"/>
-  30   │             <symbol>confluct_from_yaml</symbol>
-  31   │         </error>
-  32   │         <error id="unusedFunction" severity="style" msg="The function &apos;confluct_from_xml&apos; is never
-       │  used." verbose="The function &apos;confluct_from_xml&apos; is never used." cwe="561">
-  33   │             <location file="src/implementation.cpp" line="120" column="0"/>
-  34   │             <symbol>confluct_from_xml</symbol>
-  35   │         </error>
-  36   │         <error id="checkersReport" severity="information" msg="Active checkers: 172/592 (use --checkers-repo
-       │ rt=&lt;filename&gt; to see details)" verbose="Active checkers: 172/592 (use --checkers-report=&lt;filename&g
-       │ t; to see details)"/>
-  37   │     </errors>
-  38   │ </results>
-───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ ...
+  40   │         <error id="unusedFunction" severity="style" msg="The function &apos;uuid4&apos;
+       │ is never used." verbose="The function &apos;uuid4&apos; is never used." cwe="561">
+  41   │             <location file="src/implementation.cpp" line="193" column="0"/>
+  42   │             <symbol>uuid4</symbol>
+  43   │         </error>
+  44   │         <error id="checkersReport" severity="information" msg="Active checkers: 172/592
+       │ (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 172/5
+       │ 92 (use --checkers-report=&lt;filename&gt; to see details)"/>
+  45   │     </errors>
+  46   │ </results>
+───────┴─────────────────────────────────────────────────────────────────────────────────────────
 ```
 
 ## Status
