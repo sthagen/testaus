@@ -1,5 +1,13 @@
 # Changes:
 
+2024.2.20
+:   - Added stduuid cmake module
+- Added stduuid to implementation and test
+- Added stduuid to top level cmake lists file
+- Added tomplusplus cmake module
+- Added tomplusplus to implementation and test
+- Added tomplusplus to top level cmake lists file
+ 
 2024.2.19
 :    - Added pugixml cmake module
 - Added pugixml to implementation and test
