@@ -1,3 +1,4 @@
+#include<string>
 #include <tuple>
 #include <vector>
 
@@ -121,6 +122,13 @@ TEST_CASE("testing the json load of a custom json yields an object equal to equi
   CHECK(obj.config.i == equivalent.config.i);
 }
 
+TEST_CASE("testing the json dump of the default confluct") {
+  confluct obj{};
+  std::string expected =
+    R"({"i":0,"hello":"","arr":[0,0,0],"map":{}})";
+  CHECK(to_json(obj) == expected);
+}
+
 TEST_CASE("testing confluct load from yaml") {
   std::string buffer = R"(---
   i: 287
@@ -167,6 +175,48 @@ TEST_CASE("testing failing confluct load from (invalid) json") {
   CHECK(config.hello == empty.hello);
   CHECK(config.arr == empty.arr);
   CHECK(config.map == empty.map);
+}
+
+TEST_CASE("testing confluct load from toml") {
+  std::string  some_toml = R"(i = 287
+  hello = "Hello World"
+  arr = [ 1, 2, 3 ]
+
+  [map]
+  one = 1
+  two = 2
+  )";
+  auto config = confluct_from_toml(some_toml);
+  CHECK(config.i == 287);
+  CHECK(config.hello == std::string{"Hello World"});
+  CHECK(config.arr == std::array<uint64_t, 3>{1, 2, 3});
+  CHECK(config.map == std::map<std::string, int>{{"one", 1}, {"two", 2}});
+}
+
+TEST_CASE("testing confluct load from toml with missing values") {
+  std::string some_toml = R"(i = 287
+  arr = [ 1, 2, 3 ]
+
+  [map]
+  one = 1
+  two = 2
+  )";
+  auto config = confluct_from_toml(some_toml);
+  CHECK(config.i == 287);
+  CHECK(config.hello == std::string{""});
+  CHECK(config.arr == std::array<uint64_t, 3>{1, 2, 3});
+  CHECK(config.map == std::map<std::string, int>{{"one", 1}, {"two", 2}});
+}
+
+TEST_CASE("testing confluct load from invalid toml") {
+  std::string some_toml = R"(i = 287
+  arr = [ 1, 2, 3 ] [
+  )";
+  auto config = confluct_from_toml(some_toml);
+  CHECK(config.i == 0);
+  CHECK(config.hello == std::string{""});
+  CHECK(config.arr == std::array<uint64_t, 3>{0, 0, 0});
+  CHECK(config.map == std::map<std::string, int>{});
 }
 
 TEST_CASE("testing confluct load from xml") {
@@ -229,4 +279,20 @@ map:
   two: 2)";
   auto yaml_dumped = to_yaml(config);
   CHECK(yaml_dumped == expected);
+}
+
+TEST_CASE("testing that different calls to uuid4() yield distinct strings") {
+  int const some = 42;
+  std::vector<std::string> uuids{};
+  for (int i=0; i < some; ++i) uuids.push_back(uuid4());
+
+  for (int i=0; i < some; ++i) {
+    auto id_i = uuids[i];
+    for (int j=0; j < some; ++j) {
+      if (i != j) {
+        auto id_j = uuids[j];
+        CHECK(id_i != id_j);
+      }
+    }
+  }
 }

@@ -1,6 +1,10 @@
+#include <random>
+
 #include <glaze/glaze.hpp>
 #include <pugixml.hpp>
 #include <spdlog/spdlog.h>
+#include <toml++/toml.h>
+#include <uuid.h>
 #include <yaml-cpp/yaml.h>
 
 #include "implementation.h"
@@ -81,7 +85,12 @@ auto impluct_from_json(std::string buffer) -> impluct {  // The function ... is 
   return obj;
 }
 
-// Bake me a yaml string
+// Bake me a json string from confluct
+auto to_json(confluct obj) -> std::string {  // The function ... is never used. (CWE-561)
+  return glz::write_json(obj);
+}
+
+// Bake me a yaml string from confluct
 auto to_yaml(confluct obj) -> std::string {  // Function parameter 'obj' should be passed by const reference. (CWE-398)
   YAML::Node node;
   node["i"] = obj.i;
@@ -103,6 +112,33 @@ auto confluct_from_json(std::string buffer) -> confluct {
     return {};
   }
   return obj;
+}
+
+// Eat my tasty toml cake
+auto confluct_from_toml(std::string buffer) -> confluct {  // The function ... is never used. (CWE-561)
+  try {
+    auto tbl = toml::parse(buffer);
+    std::optional<int> i = tbl["i"].value<int>();
+    std::optional<std::string> hello = tbl["hello"].value<std::string>();
+    auto arr_view = tbl["arr"];
+    std::array<uint64_t, 3> arr{
+      *(arr_view[0].value<uint64_t>()),
+      *(arr_view[1].value<uint64_t>()),
+      *(arr_view[2].value<uint64_t>())
+    };
+    std::optional<int> one_val = tbl["map"]["one"].value<int>();
+    std::optional<int> two_val = tbl["map"]["two"].value<int>();
+    std::map<std::string, int> map{{"one", *one_val}, {"two", *two_val}};
+
+    return {
+      .i = *i,
+      .hello = *hello,
+      .arr = arr,
+      .map = map,
+    };
+  } catch (...) {
+    return {};
+  }
 }
 
 // Eat my yummie confake
@@ -151,4 +187,15 @@ auto confluct_from_xml(std::string buffer) -> confluct {  // The function ... is
     .arr = arr,
     .map = map,
   };
+}
+
+// Generate random UUID string
+auto uuid4() -> std::string {  // The function ... is never used. (CWE-561)
+  std::random_device rd;
+  auto seed_data = std::array<int, std::mt19937::state_size> {};
+  std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
+  std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+  std::mt19937 generator(seq);
+
+  return uuids::to_string(uuids::uuid_random_generator{ generator }());
 }
