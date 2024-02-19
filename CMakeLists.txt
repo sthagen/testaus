@@ -28,10 +28,20 @@ option(ENABLE_PUGIXML "Include pugixml xml functionality in the library."
 message(STATUS "ENABLE_PUGIXML is (${ENABLE_PUGIXML})")
 include(pugixml)
 
+option(ENABLE_TOMLPLUSPLUS "Include tomlplusplus toml functionality in the library."
+   ON)
+message(STATUS "ENABLE_TOMLPLUSPLUS is (${ENABLE_TOMLPLUSPLUS})")
+include(tomlplusplus)
+
 option(ENABLE_YAML_CPP "Include yaml-cpp yaml functionality in the library."
    ON)
 message(STATUS "ENABLE_YAML_CPP is (${ENABLE_YAML_CPP})")
 include(yaml-cpp)
+
+option(ENABLE_STDUUID "Include stduuid UUID functionality in the library."
+   ON)
+message(STATUS "ENABLE_STDUUID is (${ENABLE_STDUUID})")
+include(stduuid)
 
 option(ENABLE_SPDLOG "Include spdlog log functionality in the library."
    ON)
@@ -60,8 +70,19 @@ if(ENABLE_PUGIXML)
   target_link_libraries(implementation PUBLIC pugixml)
 endif()
 
+if(ENABLE_TOMLPLUSPLUS)
+  add_library(tomlplusplus INTERFACE)
+  target_include_directories(tomlplusplus INTERFACE ${tomlplusplus_SOURCE_DIR}/include/)
+  message("-- Added ${tomlplusplus_SOURCE_DIR}/include/ as include")
+  target_link_libraries(implementation PUBLIC tomlplusplus)
+endif()
+
 if(ENABLE_YAML_CPP)
   target_link_libraries(implementation PUBLIC yaml-cpp)
+endif()
+
+if(ENABLE_STDUUID)
+  target_link_libraries(implementation PUBLIC stduuid)
 endif()
 
 if(ENABLE_SPDLOG)
