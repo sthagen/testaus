@@ -43,6 +43,11 @@ option(ENABLE_STDUUID "Include stduuid UUID functionality in the library."
 message(STATUS "ENABLE_STDUUID is (${ENABLE_STDUUID})")
 include(stduuid)
 
+option(ENABLE_ARGPARSE "Include argparse argument parser functionality in the library."
+   ON)
+message(STATUS "ENABLE_ARGPARSE is (${ENABLE_ARGPARSE})")
+include(argparse)
+
 option(ENABLE_SPDLOG "Include spdlog log functionality in the library."
    ON)
 message(STATUS "ENABLE_SPDLOG is (${ENABLE_SPDLOG})")
@@ -83,6 +88,10 @@ endif()
 
 if(ENABLE_STDUUID)
   target_link_libraries(implementation PUBLIC stduuid)
+endif()
+
+if(ENABLE_ARGPARSE)
+  target_link_libraries(implementation PUBLIC argparse)
 endif()
 
 if(ENABLE_SPDLOG)
