@@ -1,7 +1,13 @@
 # Changes:
 
+2024.2.21
+:    - Added cmake module for benchmark (decoupling from gtest not yet working)
+- Added cmake module for fast_float
+- Added cmake module for fmt (linkage not yet working)
+- Amended top level cmake lists file
+
 2024.2.20
-:   - Added stduuid cmake module
+:    - Added stduuid cmake module
 - Added stduuid to implementation and test
 - Added stduuid to top level cmake lists file
 - Added tomplusplus cmake module
