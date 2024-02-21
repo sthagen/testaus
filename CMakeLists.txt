@@ -18,6 +18,21 @@ option(ENABLE_CATCH2 "Include Catch2 based tests in the library.
 message(STATUS "ENABLE_CATCH2 is (${ENABLE_CATCH2})")
 include(catch2)
 
+option(ENABLE_BENCHMARK "Include benchmark functionality in tests."
+   OFF)
+message(STATUS "ENABLE_BENCHMARK is (${ENABLE_BENCHMARK})")
+include(benchmark)
+
+option(ENABLE_FAST_FLOAT "Include fast_float parsing functionality in the library."
+   ON)
+message(STATUS "ENABLE_FAST_FLOAT is (${ENABLE_FAST_FLOAT})")
+include(fast_float)
+
+option(ENABLE_FMT "Include fmt format functionality in the library."
+   OFF)
+message(STATUS "ENABLE_FMT is (${ENABLE_FMT})")
+include(fmt)
+
 option(ENABLE_GLAZE "Include glaze json functionality in the library."
    ON)
 message(STATUS "ENABLE_GLAZE is (${ENABLE_GLAZE})")
@@ -66,6 +81,14 @@ include(coverage_compiler_options)
 enable_testing()
 
 add_library(implementation STATIC src/implementation.cpp)
+
+if(ENABLE_FAST_FLOAT)
+  target_link_libraries(implementation PUBLIC fast_float)
+endif()
+
+if(ENABLE_FMT)
+  target_link_libraries(implementation PUBLIC fmt)
+endif()
 
 if(ENABLE_GLAZE)
   target_link_libraries(implementation PUBLIC glaze::glaze)
